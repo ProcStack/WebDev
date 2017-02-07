@@ -1,12 +1,6 @@
 **Particle system class; example of Canvas, JavaScript, JQuerry, and HTML5**
 ----------------------
 
-To see this page in action, check out-
-
-http://neurous.net/
-
-----------------------
-
 *Comments to come, I appologize*
 
 This was just a test to mess around with making a JavaScript class to create particles with a given velocity, trail length, adaptive trail attributes, and to create a pulling force to the cursor.
@@ -26,6 +20,12 @@ Mobile touch support isn't working great just yet.  When holding down a finger, 
 If you hit the spacebar, it will pause the system;  hit spacebar again to start the system up again.
 
 -------------------------
+
+To see this page in action, check out-
+
+http://neurous.net/
+
+----------------------
 
 From this, I'm learning WebGl code to generate this page out in a full 3d context.
 
