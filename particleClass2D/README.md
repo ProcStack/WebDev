@@ -5,7 +5,7 @@
 
 This was just a test to mess around with making a JavaScript class to create particles with a given velocity, trail length, adaptive trail attributes, and to create a pulling force to the cursor.
 
-*This page is using a JavaScript path to JQuerry 1.10.0; I don't know what differences there will be stepping up the version, so I left it for now.*
+*This page is using a JavaScript path to Google hosted JQuerry 1.10.0; I don't know what differences there will be stepping up the version, so I left it for now.*
 
 --------------------
 
