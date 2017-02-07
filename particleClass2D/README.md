@@ -1,7 +1,7 @@
 **Particle system class; example of Canvas, JavaScript, JQuerry, and HTML5**
 ----------------------
 
-*Comments to come, I appologize*
+*Comments to come, I apologize*
 
 This was just a test to mess around with making a JavaScript class to create particles with a given velocity, trail length, adaptive trail attributes, and to create a pulling force to the cursor.
 
@@ -26,6 +26,15 @@ To see this page in action, check out-
 http://neurous.net/
 
 ----------------------
+
+Just a heads up, my math for finding a location for the particles to pull to is a little off.  In that it seems to favor the relative origin axes of the cursor position.
+
+If you hold right click, you'll see the points swarm to the cursor, hold it for 5 seconds or so, when you release, you'll see a cross float off from the location.
+
+Easy to fix on my part, I haven't had the time to make the changes though.
+
+----------------------
+
 
 From this, I'm learning WebGl code to generate this page out in a full 3d context.
 
