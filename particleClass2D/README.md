@@ -29,4 +29,4 @@ http://neurous.net/
 
 From this, I'm learning WebGl code to generate this page out in a full 3d context.
 
-Updates code to come within a particleClass3D folder in the WebDev repository.
+Updated code to come within a particleClass3D folder in the WebDev repository.
