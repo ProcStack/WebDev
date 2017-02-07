@@ -1,6 +1,12 @@
 **Particle system class; example of Canvas, JavaScript, JQuerry, and HTML5**
 ----------------------
 
+To see this page in action, check out-
+
+http://neurous.net/
+
+----------------------
+
 *Comments to come, I appologize*
 
 This was just a test to mess around with making a JavaScript class to create particles with a given velocity, trail length, adaptive trail attributes, and to create a pulling force to the cursor.
