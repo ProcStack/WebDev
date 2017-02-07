@@ -1,2 +1,2 @@
 # WebDev
-Javascipt, HTML5, CSS
+Javascipt, JQuerry, Canvas / HTML5, and CSS
