@@ -39,6 +39,8 @@ document.onmouseup=genPoint;
 //document.addEventListener('touchstart', function(e) {if(active>=0){startTouch(e);}}, false);
 //document.addEventListener('touchmove', function(e) {if(active>=0){doDragTouch(e);}}, false);
 //document.addEventListener('touchend', function(e) {if(active>=0){endTouch(e);}}, false);
+
+// Check for space bar hit to toggle on and off the running state of the particles
 $(document).on('keyup', function(e){
 	keyHit=e.keyCode || e.which;
 	var nullKeys=[9,37,38,39,40];
@@ -47,14 +49,16 @@ $(document).on('keyup', function(e){
 	}
 	//Space
 	if(keyHit===32){
+		// My ussual method to switch a variable between 0 and 1
+		// Add 1 to the current value and do modulus 2 to roll the value back to 0 if its at 1 already.
 		pause=(pause+1)%2;
 		if(pause==0){
-			runCanvas("markerCanvas",0,1);
+			runCanvas("markerCanvas",0,1); // Toggle particle running state
 		}
 		return false;
 	}
 });
-
+// Grab mouse location to be referenced for nucleus forces when right or left clicking
 function getMouseXY(e) {
 	if(e!=0){
 		if (IE) {
@@ -67,6 +71,9 @@ function getMouseXY(e) {
 		preventDefault(e);
 	}
 }
+
+// The touch support isn't working all that great right now, I'll need to adjust this moving forward in updates.
+// Holding down your finger will draw particles to your finger, but thats about it
 function touchStart(e){
 	var touchList=e.touches;
 	var touch = touchList[0];
@@ -83,6 +90,9 @@ function doDragTouch(e){
 function touchEnd(e){
 	genPoint();
 }
+
+// Point class for individual particles attributes and values
+
 function Point(id,pos,trail,tlen,vel,age,color,alpha,vis,spark){
 		this.id=id;
 		this.pos=pos;
@@ -138,7 +148,7 @@ function Point(id,pos,trail,tlen,vel,age,color,alpha,vis,spark){
 				this.trail=this.trail.slice(2,this.trail.length);
 			}
 			if(mouseAttract>0 && this.core==1){
-				if(mouseAttract==3){
+				if(mouseAttract==3){ // Right click, ALL particles pull to mouse
 						var mScale=300;
 						var addedOff=[Math.sin(this.id*75.1579+5014+runner/30+mouseX/mScale+Math.cos(this.id*215.15+runner/150+mouseY/mScale)*3.14159265)*(Math.sin(this.id/3+this.age/3)*5+15) , Math.cos(this.id*75.1579+5014+runner/30+mouseY/mScale+Math.sin(this.id*5215.15+runner/150+mouseX/mScale)*3.14159265)*(Math.cos(this.id/3+541+this.age/3)*5+15)];
 						var offMag=22+this.size*1.5;
@@ -165,7 +175,7 @@ function Point(id,pos,trail,tlen,vel,age,color,alpha,vis,spark){
 						this.vel[0]=toPos[0];
 						this.vel[1]=toPos[1];
 						this.mousePerc=1;
-				}else{
+				}else{ // Left click, particles within a given pull distance of mScale (400 pixel radius)
 					var mag=Math.sqrt( Math.pow(mouseX-this.pos[0],2)+ Math.pow(mouseY-this.pos[1],2));
 					if(mag<this.pullDist){
 						var blender=(1-mag/this.pullDist)*.9+.1;
@@ -248,6 +258,8 @@ function Point(id,pos,trail,tlen,vel,age,color,alpha,vis,spark){
 			return this.bounce;
 		}
 	}
+	// Remove dead particles
+	// When left clicking, temporary particles fly away from the mouse like a particle explosion
 	function reapParticles(){
 		var kill=0;
 		var hit=0;
@@ -270,6 +282,8 @@ function Point(id,pos,trail,tlen,vel,age,color,alpha,vis,spark){
 			}
 		}
 	}
+	// This is a horrible name for this function, pop as in "pop into existance"
+	// Not pop like removing from an array, I should REALLY rename this function
 	function popPoint(pos, count,alpha, age, spark){
 		var tmp,len;
 		var rage=0;
@@ -430,7 +444,14 @@ function runCanvas(canvas,ittr,gen){
 	}
 
 }
-
+// This is the function to draw particles to the mouse
+// Button 1 is left click and button 2 is right click
+// ------
+// You'll notice when left clicking, if you let go within a count of 300 miliseconds, it will run the genPoint function on mouseup
+// Generating 2 points for you where you click
+// holding down after 300 simply treats the mouse as an attractive nucleus force on the particles
+// ------
+// Right clicking will set the mouseAttract to 3, which will run a function to pull all points to the mouse
 function mouseAttracter(e,gen){
 	var button=e.which;
 	mButton=button;
@@ -445,7 +466,7 @@ function mouseAttracter(e,gen){
 		if(gen>=10){
 			mouseAttract=2;
 		}else if(gen<10){
-			if(	mouseAttract>=1){
+			if(mouseAttract>=1){
 				setTimeout(function(){
 					mouseAttracter(gen);
 				},30);
@@ -552,7 +573,14 @@ function drawGeo(loc,eCount,size,color,alpha,filled,flip,canvas,comp){
 		}
 	}
 }
-
+// Draw a line from a given array of points, from pxlmancer.com
+// Points - [x1,y1, x2,y2, x3,y3, ... xN,yN]
+// Width - line width in pixels, I'd suggest adding .5 to any int values, this will create a smoother look to the line
+// Color - [R, G, B]; all values are 0-255
+// Alpha - 0-1 transparency value; 1 is opaque, 0 is invisible.
+// ArcType - 0-2, how the line segments are ajoined;  Look up "canvas javascript lineCap"
+// Canvas, the ID of the given canvas object you want to draw a line on
+// Dash, 0-1, if the line should be dashed or not.  It will draw the line and draw the line again dashed, to make it pronounced
 function drawLine(points,width,color,alpha,arcType,canvas,dash){
 	var hex,docCanvas,draw;
 	var R=color[0];
@@ -594,16 +622,16 @@ function drawLine(points,width,color,alpha,arcType,canvas,dash){
 		draw.stroke();
 	}
 }
-
+// Convert a valyue of 0-255 into a hex value, 255 -> FF
 function componentToHex(c) {
     var hex = c.toString(16);
     return hex.length == 1 ? "0" + hex : hex;
 }
-
+// Turn a color array [R,G,B] with 0-255 for each value into standard css style hex, ie. #4425FF
 function rgbToHex(rgb) {
     return "#" + componentToHex(Math.min(255, Math.max(0,Math.round(rgb[0])))) + componentToHex(Math.min(255, Math.max(0,Math.round(rgb[1])))) + componentToHex(Math.min(255, Math.max(0,Math.round(rgb[2]))));
 }
-
+// Convert a color array [R,G,B] from 0-255 for each value into HSV; Hue, Saturate, and Value
 function toHSV(RGB){
 	var H,S,V;
 	var r=RGB[0];
@@ -633,7 +661,9 @@ function toHSV(RGB){
 	}
 	return [H,S,V];
 }
-
+// I have an error in my code for converting HSV to RGB
+// The HUE doesn't roll over as expected when going from 0 to 1 on roll over
+// There is a shift in the color value, I know what the problem is, but need to find time to fix it
 function toRGB(HSV){
 	var R,G,B;
 	var H=HSV[0];
@@ -676,12 +706,16 @@ function toRGB(HSV){
 	}
 	return [R,G,B];
 }
+// Used just to add a gredient and blur said gradient to the background canvas
+// I left the name gradientRunner out of bootstrapping laziness, the function on pxlmancer is designed to animate the background
+// The animation process is no longer used on pxlmancer though
 function gradientRunner(canvas,colorFrom,colorTo,runBlur){
 	var gBG=document.getElementById(canvas);
 	var drawBG=gBG.getContext("2d");
 	var cW=$("#"+canvas).width();
 	var cH=$("#"+canvas).height();
 
+	// Lets create a linear gradient between both corners of the canvas
 	drawBG.rect(0, 0, cW, cH);
 	var grd = drawBG.createLinearGradient(0,0,cW,cH);
 	grd.addColorStop(0, colorFrom);
@@ -689,11 +723,15 @@ function gradientRunner(canvas,colorFrom,colorTo,runBlur){
 	drawBG.fillStyle = grd;
 	drawBG.fill();
 
+	// Blur the canvas to eliminate banding that occurs when hex values don't have much difference in value
 	if(runBlur==1){
 		blurEffect(drawBG,drawBG,1,80,3);
 		//blurEffect(drawBG,drawBG,1,70,5);
 	}
 }
+// PIXEL PROCESSING FUNCTION
+// This is the pxlmancer scatter effect, its named blur because the function has changed over time
+// It will grab values from random points in a near by given range from the current pixel to blend with
 function blurEffect(input,output,fullCanvas,dist,levels){
 	if(dist.constructor !== Array){
 		var tmpDist=dist;
@@ -703,6 +741,7 @@ function blurEffect(input,output,fullCanvas,dist,levels){
 	}
 	var cW;
 	var cH;
+	// Determin if the given input is a canvas object or an id string
 	if(typeof input == "string"){
 		cW=$("#"+input).width();
 		cH=$("#"+input).height();
@@ -710,6 +749,10 @@ function blurEffect(input,output,fullCanvas,dist,levels){
 		var input=cn.getContext("2d");
 		output=input;
 	}else{
+		// Well, this isn't smart of me to do....
+		// I'll update this in later versions of this project
+		// The reason is that I'm using the screenWidth and screenHeight (sW, sH)
+		// This works for my website, but wont work if you intend to copy this function for personal use
 		cW=sW;
 		cH=sH;
 	}
@@ -722,20 +765,26 @@ function blurEffect(input,output,fullCanvas,dist,levels){
 	//var distCheck=4+4*Math.abs((Math.floor(runner/55)*55)%3+(dragTotal%touchChecker));
 	var startPix, endPix,percer,rPix;
 	if(fullCanvas==1){
+		// This should run by default on this project
 		startPix=0;
 		endPix=pix.length;
 		percer=1;
 	}else{
+		// ALSO not good here, I'm using refreshWindow, which is a [xMin, yMin, xMax, yMax] array
+		// This is used to reduce processing the entire screen
+		// I was running into issues where pixel processing is too slow on pxlmancer, so this sped up everything
 		startPix=cW*4*(parseInt(refreshWindow[1])-2);
 		endPix=(cW*4*(parseInt(refreshWindow[3])+2));
-		percer=$("#sl"+diaVal+"_filterPercent_val").val();
+		percer=1;
 	}
 	levels=Math.max(1,levels);
 	var blendcount=0;
 	if(dist[0]>0 || dist[1]>0 || fullCanvas==1){
 		for (var i=startPix; i<endPix; i+=4) {
+			// More use of refreshWindow, I'll need to remove this
 			if( ((i/4)%cW>parseInt(refreshWindow[0])-2 && (i/4)%cW<parseInt(refreshWindow[2])+1) || fullCanvas==1){
 				if(pix[i+3]>0){
+					// Blendcount is the weight the current value of the pixel will hold for blending
 					blendcount=Math.max(1,levels/2);
 					px=(i/4)%cW;
 					py=Math.floor((i/4)/cW);
@@ -744,6 +793,7 @@ function blurEffect(input,output,fullCanvas,dist,levels){
 					bCalc=pix[i+2]*blendcount;
 					aCalc=pix[i+3]*blendcount;
 					for (var v=0; v<levels; ++v) {
+						// Grab random nearby pixel values to blend into the current pixel
 						rx=Math.round(Math.random()*dist[0]-(dist[0]/2)+px);
 						rx=Math.max(0,Math.min(rx,cW-1))-Math.max(0, rx-cW);
 						
@@ -774,7 +824,10 @@ function blurEffect(input,output,fullCanvas,dist,levels){
 				}
 			}
 		}
-	}	
+	}
+	// This area might be needless for this project, but left it since it only runs when the page loads
+	// This for loop is used to prevent blending over the bounds of the screen
+	// While also blending with the near by pixel values
 	for (var i=startPix; i<endPix; i+=4) {
 		if( ((i/4)%cW>parseInt(refreshWindow[0])-2 && (i/4)%cW<parseInt(refreshWindow[2])+1) || fullCanvas==1){
 			if(pix[i+3]>0){
