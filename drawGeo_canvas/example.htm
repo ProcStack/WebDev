@@ -52,6 +52,15 @@
 		return true;
 	}
 	
+	// canvas - Your canvas' id
+	// loc - Array of points; [x1,y1, x2,y2, x3,y3, ... xn,yn]
+	// eCount - Edge count, should be changed different, 0,1,2 are circle alpha fill values; 3,4+ is line creation
+	//    For eCount, I'll update this usage to be more logical in the future
+	//    Since I need to decare what type of line is being made, this made things complicated
+	//    I'm probably going to split this function in 2, its just been easier for me as 1, but bulkier
+	// size - Size of line / circle diameter
+	// color - [R,G,B]; [0-255, 0-255, 0-255]
+	// filled - outlined or filled geometry
 	//drawGeo("geoDrawTest",[100,100],0,10,[0,0,255],1,1);
 	function drawGeo(canvas,loc,eCount,size,color,alpha,filled){
 		var comp=0;
