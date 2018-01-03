@@ -11,14 +11,15 @@
 	var sH=window.innerHeight;
 	var click=0;
 	var lines=new Array();
-
 	var IE = document.all?true:false;
 	document.onmousemove = function(e) {getMouseXY(e);};
 	document.onmousedown = function(e) {click=1;drawDot();};
 	document.onmouseup = function(e) {drawDot();click=0;lines=new Array();};
-	window.onresize=function(event){sW=window.innerWidth;sH=window.innerHeight;}
+	window.onresize=function(event){init();};
 	
 	function init(){ // Set canvas widht and height
+		sW=window.innerWidth;
+		sH=window.innerHeight;
 		canvas=document.getElementById("geoDrawTest");
 		canvas.setAttribute("width", sW);
 		canvas.setAttribute("height", sH);
@@ -143,7 +144,6 @@
 			draw.stroke();
 		}
 	}
-
 </script>
 </head>
 <body onLoad="init();";>
